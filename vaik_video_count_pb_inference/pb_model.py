@@ -67,7 +67,7 @@ class PbModel:
         for output_count_tensor, output_cam_tensor in zip(output_count_tensor_list, output_cam_tensor_list):
             for index in range(output_count_tensor.shape[0]):
                 resize_cam_canvas = np.zeros(input_video_shape_list[index], dtype=np.float32)
-                for frame_index in range(output_cam_tensor.shape[0]):
+                for frame_index in range(output_cam_tensor.shape[1]):
                     for cam_index in range(output_cam_tensor.shape[-1]):
                         org_cam_sum = np.sum(output_cam_tensor[0, frame_index, :, :, cam_index])
                         cam_input_video = Image.fromarray(output_cam_tensor[0, frame_index, :, cam_index]).resize((self.model_input_shape[2], self.model_input_shape[3]), resample=Image.BICUBIC)
