@@ -76,7 +76,9 @@ class PbModel:
                         resize_crop_cam_video = np.clip(resize_crop_cam_video, 0, np.max(resize_crop_cam_video))
                         resize_crop_cam_video_sum = np.sum(resize_crop_cam_video)
                         if resize_crop_cam_video_sum != 0.0:
-                            resize_crop_cam_video *= org_cam_sum / np.sum(resize_crop_cam_video)
+                            resize_crop_cam_video *= (org_cam_sum / np.sum(resize_crop_cam_video))
+                        elif org_cam_sum != 0.0 and resize_crop_cam_video_sum == 0.0:
+                            resize_crop_cam_video[0][0] = org_cam_sum
                         resize_cam_canvas[frame_index, :, :, cam_index] = resize_crop_cam_video
                 output_dict = {'count': [count for count in output_count_tensor[0].tolist()],
                                'cam': resize_cam_canvas}
