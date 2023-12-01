@@ -33,7 +33,7 @@ class PbModel:
     def __preprocess_video_list(self, input_video_list: List[np.ndarray],
                                 resize_input_shape: Tuple[int, int]) -> np.ndarray:
         resized_video_list, resize_video_shape_list, input_video_shape_list = [], [], []
-        
+
         for input_video in input_video_list:
             resized_video, resize_video_shape, input_video_shape = self.__preprocess_video(input_video, resize_input_shape)
             resized_video_list.append(resized_video)
@@ -74,7 +74,8 @@ class PbModel:
                         crop_cam_video = cam_input_video.crop((0, 0, resize_video_shape_list[index][1], resize_video_shape_list[index][0]))
                         resize_crop_cam_video = np.asarray(crop_cam_video.resize((input_video_shape_list[index][2], input_video_shape_list[index][1])))
                         resize_crop_cam_video = np.clip(resize_crop_cam_video, 0, np.max(resize_crop_cam_video))
-                        if org_cam_sum != 0.0:
+                        resize_crop_cam_video_sum = np.sum(resize_crop_cam_video)
+                        if org_cam_sum != 0.0 and  resize_crop_cam_video_sum != 0.0:
                             resize_crop_cam_video *= org_cam_sum / np.sum(resize_crop_cam_video)
                         resize_cam_canvas[frame_index, :, :, cam_index] = resize_crop_cam_video
                 output_dict = {'count': [count for count in output_count_tensor[0].tolist()],
