@@ -89,7 +89,7 @@ class PbModel:
                         resize_cam_canvas[frame_index, :, :, cam_index] = self.__make_count_heatmap(
                             output_cam_tensor[0, frame_index, :, :, cam_index],
                             resize_video_shape_list[index][0], resize_video_shape_list[index][1],
-                            input_video_shape_list[index][1], input_video_shape_list[index][2],output_count_tensor[0][cam_index])
+                            input_video_shape_list[index][1], input_video_shape_list[index][2])
                 resize_grad_cam_canvas_list = []
                 for grad_index in range(len(output_grad_cam_tensor_list)):
                     resize_grad_cam_canvas =   np.zeros((input_video_shape_list[index][0], input_video_shape_list[index][1], input_video_shape_list[index][2], output_count_tensor.shape[-1]), dtype=np.float32)
@@ -105,9 +105,14 @@ class PbModel:
                         else:
                             resize_grad_cam_canvas[:, :, :, pred_index]  = resize_grad_cam_canvas[:, :, :, pred_index] * (output_count_tensor[index][pred_index]/np.sum(resize_grad_cam_canvas[:, :, :, pred_index]))
                     resize_grad_cam_canvas_list.append(resize_grad_cam_canvas)
-                output_dict = {'count': [count for count in output_count_tensor[0].tolist()],
-                               'cam': resize_cam_canvas,
-                               'grad_cam': resize_grad_cam_canvas_list}
+                    if np.all(resize_cam_canvas[:, :, :, pred_index]  == 0.0):
+                        resize_cam_canvas[:, :, :, pred_index] = np.zeros(resize_cam_canvas[:, :, :, pred_index].shape, dtype=np.float32)
+                    else:
+                        resize_cam_canvas[:, :, :, pred_index]  = resize_cam_canvas[:, :, :, pred_index] * (output_count_tensor[index][pred_index]/np.sum(resize_cam_canvas[:, :, :, pred_index]))
+
+            output_dict = {'count': [count for count in output_count_tensor[0].tolist()],
+                           'cam': resize_cam_canvas,
+                           'grad_cam': resize_grad_cam_canvas_list}
             output_dict_list.append(output_dict)
         return output_dict_list
 
