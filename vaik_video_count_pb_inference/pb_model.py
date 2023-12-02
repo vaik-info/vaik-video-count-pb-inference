@@ -99,11 +99,11 @@ class PbModel:
                                 output_grad_cam_tensor_list[grad_index][0, frame_index, :, :, pred_index],
                                 resize_video_shape_list[index][0], resize_video_shape_list[index][1],
                                 input_video_shape_list[index][1], input_video_shape_list[index][2],output_count_tensor[0][cam_index])
-                    for pred_index in range(output_cam_tensor.shape[-1]):
-                        if np.all(resize_grad_cam_canvas[:, :, :, pred_index]  == 0.0):
-                            resize_grad_cam_canvas[:, :, :, pred_index] = np.zeros(resize_grad_cam_canvas[:, :, :, pred_index].shape, dtype=np.float32)
-                        else:
-                            resize_grad_cam_canvas[:, :, :, pred_index]  = resize_grad_cam_canvas[:, :, :, pred_index] * (output_count_tensor[index][pred_index]/np.sum(resize_grad_cam_canvas[:, :, :, pred_index]))
+                for pred_index in range(output_cam_tensor.shape[-1]):
+                    if np.all(resize_grad_cam_canvas[:, :, :, pred_index]  == 0.0):
+                        resize_grad_cam_canvas[:, :, :, pred_index] = np.zeros(resize_grad_cam_canvas[:, :, :, pred_index].shape, dtype=np.float32)
+                    else:
+                        resize_grad_cam_canvas[:, :, :, pred_index]  = resize_grad_cam_canvas[:, :, :, pred_index] * (output_count_tensor[index][pred_index]/np.sum(resize_grad_cam_canvas[:, :, :, pred_index]))
                     resize_grad_cam_canvas_list.append(resize_grad_cam_canvas)
                     if np.all(resize_cam_canvas[:, :, :, pred_index]  == 0.0):
                         resize_cam_canvas[:, :, :, pred_index] = np.zeros(resize_cam_canvas[:, :, :, pred_index].shape, dtype=np.float32)
