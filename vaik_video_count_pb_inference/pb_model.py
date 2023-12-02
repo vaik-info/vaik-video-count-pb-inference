@@ -5,8 +5,9 @@ import numpy as np
 
 
 class PbModel:
-    def __init__(self, input_saved_model_file_path: str = None, classes: Tuple = None):
+    def __init__(self, input_saved_model_file_path: str = None, classes: Tuple = None, grad_layer_name_list=('conv3d_0', 'conv3d_1', 'conv3d_2', 'conv3d_3')):
         self.model = tf.keras.models.load_model(input_saved_model_file_path)
+        self.grad_layer_name_list = grad_layer_name_list
         self.grad_model = self.__prepare_grad_model()
         self.model_input_shape = self.model.inputs[0].shape
         self.model_input_dtype = self.model.inputs[0].dtype
@@ -116,9 +117,9 @@ class PbModel:
             output_dict_list.append(output_dict)
         return output_dict_list
 
-    def __prepare_grad_model(self, layer_name_list=('conv3d_0', 'conv3d_1', 'conv3d_2', 'conv3d_3')):
+    def __prepare_grad_model(self):
         output_layers = []
-        for layer_name in layer_name_list:
+        for layer_name in self.layer_name_list:
             output_layers.append(self.model.get_layer(layer_name).output)
         output_layers.append(self.model.output)
         grad_model = tf.keras.models.Model([self.model.inputs], output_layers)
